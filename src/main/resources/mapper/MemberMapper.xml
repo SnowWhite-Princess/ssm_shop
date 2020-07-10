@@ -1,0 +1,46 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smart.shop.mapper.MemberMapper">
+    <resultMap id="BaseResultMap" type="com.smart.shop.domain.entity.Member">
+        <id column="member_id" jdbcType="BIGINT" property="memberId"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+    </resultMap>
+
+<!--    concat 拼接字符串函数-->
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        <!--        SELECT * FROM member WHERE username LIKE + concat('%',#{member.username},'%')OR phone LIKE concat('%',#{member.username},'%') OR  email LIKE concat('%',#{member.username})-->
+        SELECT * FROM member
+        <trim prefix="where" prefixOverrides="AND">
+            <if test="keyword != null ">
+                AND (username LIKE concat('%',#{keyword},'%') OR phone LIKE concat('%',#{keyword},'%')
+                OR email LIKE concat('%',#{keyword},'%'))
+            </if>
+
+            <if test="createDate != null ">
+                <!--                AND create_time = #{member.createTime}-->
+                AND create_time BETWEEN concat(#{createDate},'00:00:00') AND concat(#{createDate},'23:59:59')
+            </if>
+        </trim>
+
+        limit #{limit},#{offset}
+    </select>
+
+
+    <update id="update">
+      UPDATE member
+<!--        prefix 前缀  suffixOverrides 后缀-->
+      <trim prefix="set" suffixOverrides=",">
+
+      </trim>
+    </update>
+
+</mapper>
